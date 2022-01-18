@@ -14,15 +14,57 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Welcome to Flutter',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Welcome to Flutter'),
-        ),
-        body: const Center(
-          child: Text('Hello World'),
-        ),
-      ),
+      title: 'Symbaroum Reference',
+      home: const SearchApp(),
     );
   }
+}
+
+class SearchApp extends StatefulWidget {
+  const SearchApp({Key? key}) : super(key: key);
+
+  @override
+  _SearchAppState createState() => _SearchAppState();
+}
+
+class _SearchAppState extends State<SearchApp> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Symbaroum Reference'),
+      ),
+      body: _buildSuggestions(),
+    );
+  }
+}
+
+Widget _buildSuggestions() {
+  return ListView.builder(
+    itemBuilder: (context, index) {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(11.0),
+          child: _buildRow(),
+        ),
+      );
+    },
+    itemCount: 5,
+  );
+}
+
+Widget _buildRow() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      Text(
+        'Note title',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      Text('Note Text'),
+    ]
+  );
 }
