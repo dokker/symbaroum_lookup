@@ -3,6 +3,11 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'dart:convert';
+
+import 'package:flutter/services.dart';
+
+import 'entities/talent.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,9 +18,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Symbaroum Reference',
-      home: const SearchApp(),
+      home: SearchApp(),
     );
   }
 }
@@ -28,6 +33,31 @@ class SearchApp extends StatefulWidget {
 }
 
 class _SearchAppState extends State<SearchApp> {
+  List<Talent> _talents = <Talent>[];
+
+  // Fetch content from Json file
+  Future<List<Talent>> readJson() async {
+      final String response = await rootBundle.loadString('assets/symbaroum_en.json');
+    // final data = await json.decode(response);
+    final data = json.decode(response);
+    final talents = <Talent>[];
+
+    for (var talentJson in data) {
+      talents.add(Talent.fromJson(talentJson));
+    }
+    return talents;
+  }
+
+  @override
+  void initState() {
+    readJson().then((value) {
+      setState(() {
+        _talents.addAll(value);
+      });
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,34 +67,35 @@ class _SearchAppState extends State<SearchApp> {
       body: _buildSuggestions(),
     );
   }
+
+  Widget _buildSuggestions() {
+    return ListView.builder(
+      itemBuilder: (context, index) {
+        return Card(
+          child: Padding(
+            padding: const EdgeInsets.all(11.0),
+            child: _buildRow(index),
+          ),
+        );
+      },
+      itemCount: _talents.length,
+    );
+  }
+
+  Widget _buildRow(int index) {
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            _talents[index].type,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(_talents[index].description),
+        ]
+    );
+  }
 }
 
-Widget _buildSuggestions() {
-  return ListView.builder(
-    itemBuilder: (context, index) {
-      return Card(
-        child: Padding(
-          padding: const EdgeInsets.all(11.0),
-          child: _buildRow(),
-        ),
-      );
-    },
-    itemCount: 5,
-  );
-}
-
-Widget _buildRow() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: <Widget>[
-      Text(
-        'Note title',
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      Text('Note Text'),
-    ]
-  );
-}
