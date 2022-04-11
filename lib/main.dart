@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 //import 'package:flutter_html/flutter_html.dart';
-import 'package:markdown/markdown.dart' as md;
+//import 'package:markdown/markdown.dart' as md;
 
 
 import 'entities/talent.dart';
@@ -102,28 +103,62 @@ class _SearchAppState extends State<SearchApp> {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            _talents[index].name,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            _talents[index].type,
-            style: const TextStyle(
-              //fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          Text(
-              checkNullString(_talents[index].description),
+          Row(children: [
+            Text(
+              _talents[index].name,
               style: const TextStyle(
-                fontStyle: FontStyle.italic,
-
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
+            ),
+            Spacer(),
+            Text(
+              _talents[index].type,
+              style: const TextStyle(
+                //fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ]),
+
+          Text(
+            checkNullString(_talents[index].description),
+            style: const TextStyle(
+              fontStyle: FontStyle.italic,
+
+            ),
           ),
-          Text(checkNullString(_talents[index].novice)),
+          const SizedBox(height: 10),
+          RichText(text: TextSpan(
+              style: const TextStyle(
+                fontSize: 14.0,
+                color: Colors.black,
+              ),
+              children: <TextSpan>[
+                const TextSpan(text: 'Novice ',  style: TextStyle(fontWeight: FontWeight.bold)),
+                TextSpan(text: checkNullString(_talents[index].novice))
+              ]
+          )),
+          RichText(text: TextSpan(
+              style: const TextStyle(
+                fontSize: 14.0,
+                color: Colors.black,
+              ),
+              children: <TextSpan>[
+                const TextSpan(text: 'Adept ',  style: TextStyle(fontWeight: FontWeight.bold)),
+                TextSpan(text: checkNullString(_talents[index].adept))
+              ]
+          )),
+          RichText(text: TextSpan(
+              style: const TextStyle(
+                fontSize: 14.0,
+                color: Colors.black,
+              ),
+              children: <TextSpan>[
+                const TextSpan(text: 'Master ',  style: TextStyle(fontWeight: FontWeight.bold)),
+                TextSpan(text: checkNullString(_talents[index].master))
+              ]
+          ))
         ]
     );
   }
