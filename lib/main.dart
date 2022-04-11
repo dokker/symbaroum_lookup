@@ -6,8 +6,13 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+//import 'package:flutter_html/flutter_html.dart';
+import 'package:markdown/markdown.dart' as md;
+
 
 import 'entities/talent.dart';
+//import 'dart:developer' as developer;
+
 
 void main() {
   runApp(const MyApp());
@@ -58,6 +63,10 @@ class _SearchAppState extends State<SearchApp> {
     super.initState();
   }
 
+  String checkNullString(dataItem) {
+    return dataItem == null ? '' : dataItem!;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,17 +92,38 @@ class _SearchAppState extends State<SearchApp> {
   }
 
   Widget _buildRow(int index) {
+    // String description;
+    // if (_talents[index].description == null) {
+    //   description = '';
+    // } else {
+    //   description = _talents[index].description!;
+    // }
+    //developer.log(description);
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            _talents[index].type,
+            _talents[index].name,
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
-          Text(_talents[index].description),
+          Text(
+            _talents[index].type,
+            style: const TextStyle(
+              //fontSize: 18,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          Text(
+              checkNullString(_talents[index].description),
+              style: const TextStyle(
+                fontStyle: FontStyle.italic,
+
+              ),
+          ),
+          Text(checkNullString(_talents[index].novice)),
         ]
     );
   }
