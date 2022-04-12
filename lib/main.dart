@@ -13,7 +13,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 
 
 import 'entities/talent.dart';
-//import 'dart:developer' as developer;
+import 'dart:developer' as developer;
 
 
 void main() {
@@ -40,7 +40,11 @@ class SearchApp extends StatefulWidget {
 }
 
 class _SearchAppState extends State<SearchApp> {
-  List<Talent> _talents = <Talent>[];
+  final List<Talent> _talents = <Talent>[];
+  List<Talent> _foundTalents = <Talent>[];
+  // controller for clearing input
+  final TextEditingController _controller = TextEditingController();
+
 
   // Fetch content from Json file
   Future<List<Talent>> readJson() async {
@@ -59,23 +63,41 @@ class _SearchAppState extends State<SearchApp> {
   void initState() {
     readJson().then((value) {
       setState(() {
+        // Initialize talent lists
         _talents.addAll(value);
+        _foundTalents = _talents;
       });
     });
     super.initState();
   }
 
+  // Handle null values in list
   String checkNullString(dataItem) {
     return dataItem == null ? '' : dataItem!;
   }
 
+  // filter through the list by keywords
   void _runFilter (String enteredKeyword) {
+    List<Talent> results = <Talent>[];
+    if (enteredKeyword.isEmpty) {
+      // list all when input is empty
+      results = _talents;
+    } else {
+      results = _talents.where((element) =>
+        // use case insensitive way
+        element.name.toLowerCase().contains(enteredKeyword.toLowerCase()))
+        .toList();
+    }
+
+    //notify framework about changes
+    setState(() {
+      //developer.log('run filter', name:'enteredKeyword', error: jsonEncode(results));
+      _foundTalents = results;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    // controller for clearing input
-    final TextEditingController _controller = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: Container(
@@ -88,20 +110,31 @@ class _SearchAppState extends State<SearchApp> {
               controller: _controller,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.search),
+                // make a clear button
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.clear),
-                  onPressed: _controller.clear,
+                  onPressed: () {
+                    _controller.clear();
+                    _runFilter('');
+                  }
                 ),
                 hintText: 'Search...',
                 border: InputBorder.none
               ),
+              onChanged: (value) => _runFilter(value),
             ),
           ),
         ),
         automaticallyImplyLeading: false,
         centerTitle: true,
       ),
-      body: _buildSuggestions(),
+      // handle empty list
+      body: _foundTalents.isNotEmpty
+          ? _buildSuggestions()
+          : const Align(
+              alignment: Alignment.center,
+              child: Text('No results found', style: TextStyle(fontSize: 24))
+          ),
     );
   }
 
@@ -115,32 +148,25 @@ class _SearchAppState extends State<SearchApp> {
           ),
         );
       },
-      itemCount: _talents.length,
+      itemCount: _foundTalents.length,
     );
   }
 
   Widget _buildRow(int index) {
-    // String description;
-    // if (_talents[index].description == null) {
-    //   description = '';
-    // } else {
-    //   description = _talents[index].description!;
-    // }
-    //developer.log(description);
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(children: [
             Text(
-              _talents[index].name,
+              _foundTalents[index].name,
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Spacer(),
+            const Spacer(),
             Text(
-              _talents[index].type,
+              _foundTalents[index].type,
               style: const TextStyle(
                 //fontSize: 18,
                 fontWeight: FontWeight.w500,
@@ -148,8 +174,9 @@ class _SearchAppState extends State<SearchApp> {
             ),
           ]),
 
+          const SizedBox(height: 10),
           Text(
-            checkNullString(_talents[index].description),
+            checkNullString(_foundTalents[index].description),
             style: const TextStyle(
               fontStyle: FontStyle.italic,
 
@@ -163,7 +190,7 @@ class _SearchAppState extends State<SearchApp> {
               ),
               children: <TextSpan>[
                 const TextSpan(text: 'Novice ',  style: TextStyle(fontWeight: FontWeight.bold)),
-                TextSpan(text: checkNullString(_talents[index].novice))
+                TextSpan(text: checkNullString(_foundTalents[index].novice))
               ]
           )),
           RichText(text: TextSpan(
@@ -173,7 +200,7 @@ class _SearchAppState extends State<SearchApp> {
               ),
               children: <TextSpan>[
                 const TextSpan(text: 'Adept ',  style: TextStyle(fontWeight: FontWeight.bold)),
-                TextSpan(text: checkNullString(_talents[index].adept))
+                TextSpan(text: checkNullString(_foundTalents[index].adept))
               ]
           )),
           RichText(text: TextSpan(
@@ -183,7 +210,7 @@ class _SearchAppState extends State<SearchApp> {
               ),
               children: <TextSpan>[
                 const TextSpan(text: 'Master ',  style: TextStyle(fontWeight: FontWeight.bold)),
-                TextSpan(text: checkNullString(_talents[index].master))
+                TextSpan(text: checkNullString(_foundTalents[index].master))
               ]
           ))
         ]
