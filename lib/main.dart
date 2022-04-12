@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
@@ -68,11 +69,37 @@ class _SearchAppState extends State<SearchApp> {
     return dataItem == null ? '' : dataItem!;
   }
 
+  void _runFilter (String enteredKeyword) {
+  }
+
   @override
   Widget build(BuildContext context) {
+    // controller for clearing input
+    final TextEditingController _controller = TextEditingController();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Symbaroum Reference'),
+        title: Container(
+          height: 40,
+          decoration: BoxDecoration(
+            color: Colors.white, borderRadius: BorderRadius.circular(5),
+          ),
+          child: Center(
+            child: TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: _controller.clear,
+                ),
+                hintText: 'Search...',
+                border: InputBorder.none
+              ),
+            ),
+          ),
+        ),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
       ),
       body: _buildSuggestions(),
     );
