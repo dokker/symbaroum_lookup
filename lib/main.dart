@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/cupertino.dart';
+import 'dart:ffi';
+
+//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
@@ -13,7 +15,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 
 
 import 'entities/talent.dart';
-import 'dart:developer' as developer;
+//import 'dart:developer' as developer;
 
 
 void main() {
@@ -42,9 +44,12 @@ class SearchApp extends StatefulWidget {
 class _SearchAppState extends State<SearchApp> {
   final List<Talent> _talents = <Talent>[];
   List<Talent> _foundTalents = <Talent>[];
+
   // controller for clearing input
   final TextEditingController _controller = TextEditingController();
 
+  // text settings
+  final double baseTextSize = 16;
 
   // Fetch content from Json file
   Future<List<Talent>> readJson() async {
@@ -74,6 +79,16 @@ class _SearchAppState extends State<SearchApp> {
   // Handle null values in list
   String checkNullString(dataItem) {
     return dataItem == null ? '' : dataItem!;
+  }
+
+  bool itemHasLevels(dataItem) {
+    switch (dataItem.type) {
+      case 'talent':
+      case 'mystical power':
+        return true;
+      default:
+        return false;
+    }
   }
 
   // filter through the list by keywords
@@ -159,16 +174,16 @@ class _SearchAppState extends State<SearchApp> {
           Row(children: [
             Text(
               _foundTalents[index].name,
-              style: const TextStyle(
-                fontSize: 18,
+              style: TextStyle(
+                fontSize: baseTextSize + 2,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const Spacer(),
             Text(
               _foundTalents[index].type,
-              style: const TextStyle(
-                //fontSize: 18,
+              style: TextStyle(
+                fontSize: baseTextSize,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -177,15 +192,15 @@ class _SearchAppState extends State<SearchApp> {
           const SizedBox(height: 10),
           Text(
             checkNullString(_foundTalents[index].description),
-            style: const TextStyle(
+            style: TextStyle(
               fontStyle: FontStyle.italic,
-
+              fontSize: baseTextSize,
             ),
           ),
           const SizedBox(height: 10),
           RichText(text: TextSpan(
-              style: const TextStyle(
-                fontSize: 14.0,
+              style: TextStyle(
+                fontSize: baseTextSize,
                 color: Colors.black,
               ),
               children: <TextSpan>[
@@ -193,19 +208,26 @@ class _SearchAppState extends State<SearchApp> {
                 TextSpan(text: checkNullString(_foundTalents[index].novice))
               ]
           )),
-          RichText(text: TextSpan(
-              style: const TextStyle(
-                fontSize: 14.0,
+
+          checkNullString(_foundTalents[index].adept).isEmpty
+          ? Container()
+          : RichText(text: TextSpan(
+              style: TextStyle(
+                fontSize: baseTextSize,
                 color: Colors.black,
               ),
               children: <TextSpan>[
-                const TextSpan(text: 'Adept ',  style: TextStyle(fontWeight: FontWeight.bold)),
+                const TextSpan(text: 'Adept ',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 TextSpan(text: checkNullString(_foundTalents[index].adept))
               ]
           )),
-          RichText(text: TextSpan(
-              style: const TextStyle(
-                fontSize: 14.0,
+
+          checkNullString(_foundTalents[index].adept).isEmpty
+          ? Container()
+          : RichText(text: TextSpan(
+              style: TextStyle(
+                fontSize: baseTextSize,
                 color: Colors.black,
               ),
               children: <TextSpan>[
