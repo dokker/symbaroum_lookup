@@ -83,6 +83,7 @@ class _SearchAppState extends State<SearchApp> {
   bool itemHasLevels(dataItem) {
     switch (dataItem.type) {
       case 'talent':
+      case 'monstrous trait':
       case 'mystical power':
         return true;
       default:
