@@ -77,11 +77,6 @@ class _SearchAppState extends State<SearchApp> {
     super.initState();
   }
 
-  // Handle null values in list
-  String checkNullString(dataItem) {
-    return dataItem == null ? '' : dataItem!;
-  }
-
   bool itemHasLevels(dataItem) {
     switch (dataItem.type) {
       case 'talent':
@@ -204,7 +199,7 @@ class _SearchAppState extends State<SearchApp> {
       ]),
       const SizedBox(height: 10),
       Text(
-        checkNullString(_foundTalents[index].description),
+        _foundTalents[index].description,
         style: TextStyle(
           fontStyle: FontStyle.italic,
           fontSize: baseTextSize,
@@ -223,13 +218,13 @@ class _SearchAppState extends State<SearchApp> {
                           text: 'Novice ',
                           style: TextStyle(fontWeight: FontWeight.bold)),
                       TextSpan(
-                          text: checkNullString(_foundTalents[index].novice))
+                          text: _foundTalents[index].novice)
                     ]
                   : <TextSpan>[
                       TextSpan(
-                          text: checkNullString(_foundTalents[index].novice))
+                          text: _foundTalents[index].novice)
                     ])),
-      checkNullString(_foundTalents[index].adept).isEmpty
+      _foundTalents[index].adept.isEmpty
           ? Container()
           : RichText(
               text: TextSpan(
@@ -241,9 +236,9 @@ class _SearchAppState extends State<SearchApp> {
                   const TextSpan(
                       text: 'Adept ',
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  TextSpan(text: checkNullString(_foundTalents[index].adept))
+                  TextSpan(text: _foundTalents[index].adept)
                 ])),
-      checkNullString(_foundTalents[index].adept).isEmpty
+      _foundTalents[index].adept.isEmpty
           ? Container()
           : RichText(
               text: TextSpan(
@@ -255,7 +250,7 @@ class _SearchAppState extends State<SearchApp> {
                   const TextSpan(
                       text: 'Master ',
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  TextSpan(text: checkNullString(_foundTalents[index].master))
+                  TextSpan(text: _foundTalents[index].master)
                 ]))
     ]);
   }
