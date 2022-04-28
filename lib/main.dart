@@ -9,12 +9,14 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+//import 'package:flutter_markdown/flutter_markdown.dart';
 //import 'package:flutter_html/flutter_html.dart';
 //import 'package:markdown/markdown.dart' as md;
 
 import 'entities/talent.dart';
+import 'components/drawer.dart';
 //import 'dart:developer' as developer;
+//import '../entities/checkboxlistmodel.dart';
 
 void main() {
   runApp(const MyApp());
@@ -93,12 +95,25 @@ class _SearchAppState extends State<SearchApp> {
 
   // filter through the list by keywords
   void _runFilter(String enteredKeyword) {
+    //print(checkboxListModel[0].isCheck);
     List<Talent> results = <Talent>[];
     if (enteredKeyword.isEmpty) {
       // list all when input is empty
       results = _talents;
     } else {
-      results = _talents
+      // check is type filtered
+      if (checkboxListModel.any((selection) => selection.isCheck == true)){
+        // collect results by selected types
+        for (var selectedType in checkboxListModel) {
+          if (selectedType.isCheck ?? false) {
+            results += _talents.where(((talent) => talent.type.toLowerCase() == selectedType.name)).toList();
+          }
+        }
+      } else {
+        results = _talents;
+      }
+
+      results = results
           .where((element) =>
               // use case insensitive way
               element.name.toLowerCase().contains(enteredKeyword.toLowerCase()))
@@ -140,7 +155,7 @@ class _SearchAppState extends State<SearchApp> {
             ),
           ),
         ),
-        automaticallyImplyLeading: false,
+        //automaticallyImplyLeading: false,
         centerTitle: true,
       ),
       // handle empty list
@@ -149,6 +164,7 @@ class _SearchAppState extends State<SearchApp> {
           : const Align(
               alignment: Alignment.center,
               child: Text('No results found', style: TextStyle(fontSize: 24))),
+      drawer: const GetDrawer(),
     );
   }
 
