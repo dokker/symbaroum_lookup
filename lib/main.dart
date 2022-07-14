@@ -82,6 +82,7 @@ class _SearchAppState extends State<SearchApp> {
       case 'talent':
       case 'monstrous trait':
       case 'mystical power':
+      case 'trait':
         return true;
       default:
         return false;
